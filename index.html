@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Align | 顯化對頻日誌</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkFsaWduIiwKICAic2hvcnRfbmFtZSI6ICJBbGlnbiIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAic2hvd19jYXBzIjogdHJ1ZSwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xociI6ICIjRkZGRkZGIiwKICAidGhlbWVfY29sb3IiOiAiIzYzNjZmMSIKfQ==">
+    
+    <!-- Tailwind & Lucide -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background: #f8fafc;
+            /* 防止手機拉動橡皮筋效果 */
+            overflow: hidden; 
+        }
+
+        /* 響應式容器：手機全螢幕，桌機限制寬度並置中 */
+        .app-container {
+            width: 100%;
+            height: 100vh;
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(0,0,0,0.02);
+        }
+
+        .scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 1.5rem;
+        }
+
+        /* 玻璃擬態輸入框 */
+        .input-card {
+            background: #ffffff;
+            border: 1px solid #f1f5f9;
+            transition: all 0.3s ease;
+        }
+
+        .input-card:focus-within {
+            border-color: #e2e8f0;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.04);
+            transform: translateY(-2px);
+        }
+
+        textarea::placeholder { color: #cbd5e1; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- 頂部標題列 -->
+        <header class="px-6 py-5 flex justify-between items-center border-b border-slate-50">
+            <div>
+                <h1 class="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                    <i data-lucide="compass" class="text-indigo-500 w-5 h-5"></i> Align
+                </h1>
+                <p id="date-display" class="text-[10px] text-slate-400 font-medium uppercase mt-0.5"></p>
+            </div>
+            <div id="sync-status" class="w-2 h-2 rounded-full bg-green-400"></div>
+        </header>
+
+        <!-- 主要內容區 (可滾動) -->
+        <div class="scroll-area space-y-6">
+            <!-- 意圖卡片 -->
+            <section class="space-y-3">
+                <label class="flex items-center gap-2 text-xs font-bold text-slate-500 tracking-widest uppercase ml-1">
+                    <i data-lucide="zap" class="w-3 h-3"></i> 意圖腳本
+                </label>
+                <div class="input-card rounded-3xl p-5">
+                    <textarea id="manifest" 
+                        class="w-full h-40 bg-transparent border-none focus:ring-0 text-slate-700 leading-relaxed resize-none text-base"
+                        placeholder="以『我已經...』開頭，感受那種願望實現的震動感。"></textarea>
+                </div>
+            </section>
+
+            <!-- 感謝卡片 -->
+            <section class="space-y-3">
+                <label class="flex items-center gap-2 text-xs font-bold text-slate-500 tracking-widest uppercase ml-1">
+                    <i data-lucide="heart" class="w-3 h-3 text-rose-400"></i> 豐盛感謝
+                </label>
+                <div class="input-card rounded-3xl p-5">
+                    <textarea id="gratitude" 
+                        class="w-full h-40 bg-transparent border-none focus:ring-0 text-slate-700 leading-relaxed resize-none text-base"
+                        placeholder="今天發生了什麼讓你感到豐盛的小事？"></textarea>
+                </div>
+            </section>
+
+            <!-- 每日提示 -->
+            <div class="p-6 bg-indigo-50/50 rounded-[2rem] border border-indigo-100/50 text-center">
+                <p class="text-sm text-indigo-600 font-medium italic">
+                    "能量往哪裡走，實相就在哪裡結成。"
+                </p>
+            </div>
+        </div>
+
+        <!-- 底部固定按鈕 -->
+        <footer class="p-5 border-t border-slate-50 bg-white/80 backdrop-blur-md">
+            <div class="flex gap-3">
+                <button onclick="save()" class="flex-1 bg-slate-900 hover:bg-black text-white py-4 rounded-2xl font-semibold transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                    <i data-lucide="box" class="w-4 h-4"></i> 封存當前頻率
+                </button>
+                <button onclick="clearAll()" class="px-5 bg-slate-50 text-slate-400 rounded-2xl hover:bg-rose-50 hover:text-rose-500 transition-colors">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // 初始化圖標
+        lucide.createIcons();
+
+        // 顯示日期
+        const options = { month: 'short', day: 'numeric', weekday: 'short' };
+        document.getElementById('date-display').innerText = new Date().toLocaleDateString('en-US', options);
+
+        const mInput = document.getElementById('manifest');
+        const gInput = document.getElementById('gratitude');
+        const status = document.getElementById('sync-status');
+
+        // 讀取
+        window.onload = () => {
+            const data = JSON.parse(localStorage.getItem('align_log') || '{}');
+            mInput.value = data.m || "";
+            gInput.value = data.g || "";
+        };
+
+        // 儲存
+        function save() {
+            const data = { m: mInput.value, g: gInput.value };
+            localStorage.setItem('align_log', JSON.stringify(data));
+            
+            // 視覺反饋
+            status.classList.add('animate-ping');
+            setTimeout(() => status.classList.remove('animate-ping'), 1000);
+            
+            if(navigator.vibrate) navigator.vibrate(20);
+            alert("能量已鎖定！");
+        }
+
+        // 清除
+        function clearAll() {
+            if(confirm("確定要重新對頻嗎？")) {
+                mInput.value = "";
+                gInput.value = "";
+                localStorage.removeItem('align_log');
+            }
+        }
+
+        // 自動儲存
+        let timeout;
+        [mInput, gInput].forEach(el => {
+            el.addEventListener('input', () => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    localStorage.setItem('align_log', JSON.stringify({ m: mInput.value, g: gInput.value }));
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>
