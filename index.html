@@ -3,162 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Align Web | 專業顯化管理系統</title>
+    <title>My Align Journal | 心靈顯化手帳</title>
     
-    <!-- Tailwind & Lucide -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Noto+Sans+TC:wght@300;500;700&display=swap');
+        /* 引入手寫風格字體與襯線字體 */
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;500&display=swap');
         
+        :root {
+            --paper-color: #fdfaf5; /* 奶油色紙張 */
+            --line-color: #e0d7c6; /* 橫格線顏色 */
+        }
+
         body {
-            font-family: 'Quicksand', 'Noto Sans TC', sans-serif;
-            background-color: #fcfcfd;
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #e5e1d7; /* 桌子背景色 */
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36z8gAFkNfX58RygALMDIwMAAVAgA4SQUC5A76HAAAAABJRU5ErkJggg=='); /* 輕微木紋質感 */
         }
 
-        .web-sidebar {
-            width: 260px;
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            border-right: 1px solid #f1f1f4;
-            background: white;
+        /* 日誌本外殼 */
+        .journal-cover {
+            background-color: #4b5563; /* 深灰色外殼 */
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 15px rgba(0,0,0,0.1) inset;
+            padding: 20px;
+            position: relative;
         }
 
-        .main-content {
-            margin-left: 260px;
+        /* 書籤絲帶 */
+        .journal-cover::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            right: 50px;
+            width: 20px;
+            height: 100px;
+            background-color: #be123c; /* 玫瑰紅絲帶 */
+            border-radius: 0 0 5px 5px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        /* 日誌本內頁容器 */
+        .journal-pages {
+            background-color: var(--paper-color);
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            min-height: 80vh;
+            position: relative;
+        }
+
+        /* 中間裝訂線/活頁孔模擬 */
+        .journal-spine {
+            width: 40px;
+            background: linear-gradient(to right, rgba(0,0,0,0.05), rgba(0,0,0,0) 10%, rgba(0,0,0,0) 90%, rgba(0,0,0,0.05));
+            position: relative;
+            border-left: 1px solid rgba(0,0,0,0.02);
+            border-right: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .journal-spine::after {
+            content: '○○○○○○○○○○○○○○○';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(0,0,0,0.1);
+            font-size: 18px;
+            line-height: 2.5;
+            letter-spacing: 2px;
+            text-align: center;
+            height: calc(100% - 40px);
+            overflow: hidden;
+        }
+
+        /* 單個頁面 */
+        .journal-page {
+            flex: 1;
             padding: 40px;
-            min-height: 100vh;
+            position: relative;
         }
 
-        /* 響應式調整：小螢幕時取消側邊欄固定 */
-        @media (max-width: 768px) {
-            .web-sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                border-right: none;
-                border-bottom: 1px solid #f1f1f4;
-            }
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
+        /* 模擬橫格線與手寫字體 */
+        .ruled-textarea {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            resize: none;
+            /* 英文字體使用 Caveat (手寫風), 中文使用 Noto Serif TC */
+            font-family: 'Caveat', 'Noto Serif TC', serif;
+            font-size: 20px;
+            line-height: 32px; /* 必須與 background-size 匹配 */
+            color: #4a4130;
+            outline: none !important;
+            padding: 0;
+            
+            /* 橫格線生成技巧 */
+            background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
+            background-size: 100% 32px; /* 32px 是一行的高度 */
+            background-attachment: local;
+            background-position: 0 31px;
         }
 
-        .glass-input {
-            background: white;
-            border: 1px solid #eef0f2;
-            border-radius: 16px;
-            transition: all 0.2s ease;
+        textarea::placeholder {
+            color: #c9c1af;
+            font-style: italic;
+            font-family: 'Noto Sans TC', sans-serif;
+            font-size: 16px;
         }
 
-        .glass-input:focus-within {
-            border-color: #6366f1;
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.08);
+        /* 響應式：手機上只顯示一面，並取消外殼 */
+        @media (max-width: 1024px) {
+            .journal-cover { padding: 0; background: transparent; box-shadow: none; }
+            .journal-pages { flex-direction: column; min-height: 100vh; }
+            .journal-spine { width: 100%; height: 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.05), transparent); }
+            .journal-spine::after { content: ''; }
+            .journal-page { padding: 25px; }
+            .journal-cover::before { display: none; } /* 隱藏絲帶 */
         }
     </style>
 </head>
-<body class="text-slate-700">
+<body class="p-4 md:p-10 flex justify-center items-center min-h-screen">
 
-    <!-- 側邊導覽欄 -->
-    <aside class="web-sidebar flex flex-col p-6">
-        <div class="flex items-center gap-3 mb-10 px-2">
-            <div class="p-2 bg-indigo-600 rounded-lg shadow-lg shadow-indigo-200">
-                <i data-lucide="compass" class="text-white w-5 h-5"></i>
-            </div>
-            <span class="text-xl font-bold tracking-tight text-slate-900">Align Web</span>
-        </div>
-
-        <nav class="flex-1 space-y-2">
-            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-indigo-50 text-indigo-600 rounded-xl font-semibold">
-                <i data-lucide="layout-dashboard" size="18"></i> 每日工作台
-            </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-50 hover:text-slate-600 rounded-xl transition-all">
-                <i data-lucide="history" size="18"></i> 歷史紀錄
-            </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-50 hover:text-slate-600 rounded-xl transition-all">
-                <i data-lucide="settings" size="18"></i> 系統設定
-            </a>
-        </nav>
-
-        <div class="mt-auto p-4 bg-slate-50 rounded-2xl border border-slate-100">
-            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">今日語錄</p>
-            <p class="text-xs text-slate-500 italic leading-relaxed">"你關注什麼，什麼就增長。"</p>
-        </div>
-    </aside>
-
-    <!-- 主要內容區 -->
-    <main class="main-content">
-        <header class="flex justify-between items-end mb-10">
-            <div>
-                <h2 class="text-3xl font-bold text-slate-900">顯化工作台</h2>
-                <p id="full-date" class="text-slate-400 mt-1"></p>
+    <div class="w-full max-w-7xl journal-cover">
+        
+        <header class="flex justify-between items-center mb-6 px-4">
+            <div class="flex items-center gap-3">
+                <i data-lucide="compass" class="text-white w-7 h-7"></i>
+                <h1 class="text-2xl font-bold text-white tracking-tight font-serif">心靈手帳</h1>
+                <span id="date-display" class="text-slate-300 ml-4 font-mono text-sm"></span>
             </div>
             <div class="flex gap-3">
-                <button onclick="clearData()" class="px-5 py-2.5 text-slate-500 hover:bg-slate-100 rounded-xl transition-all font-medium text-sm flex items-center gap-2">
-                    <i data-lucide="trash-2" size="16"></i> 重置
+                <button onclick="clearData()" class="px-4 py-2 text-slate-300 hover:text-white rounded-lg text-sm flex items-center gap-1.5 transition-colors">
+                    <i data-lucide="trash-2" size="14"></i> 重置頁面
                 </button>
-                <button onclick="saveData()" class="px-8 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-lg shadow-indigo-100 transition-all font-bold text-sm flex items-center gap-2">
-                    <i data-lucide="save" size="16"></i> 儲存今日頻率
+                <button onclick="saveData()" class="px-6 py-2.5 bg-rose-700 hover:bg-rose-800 text-white rounded-lg shadow-md transition-all font-bold text-sm flex items-center gap-2 active:scale-95">
+                    <i data-lucide="pen-tool" size="16"></i> 閤上手帳並儲存
                 </button>
             </div>
         </header>
 
-        <!-- 網頁版多欄佈局 -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="journal-pages">
             
-            <!-- 意圖區 -->
-            <section class="space-y-4">
-                <div class="flex justify-between items-center px-1">
-                    <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                        <i data-lucide="sparkles" class="text-yellow-500" size="18"></i> 核心意圖
-                    </h3>
-                    <span class="text-[10px] bg-slate-100 text-slate-400 px-2 py-0.5 rounded uppercase font-bold">Scripting</span>
+            <div class="journal-page border-r border-slate-100/50">
+                <div class="flex items-center gap-3 mb-6 pb-2 border-b-2 border-slate-200">
+                    <i data-lucide="zap" class="text-amber-600 w-5 h-5"></i>
+                    <h2 class="text-xl font-bold text-slate-800 font-serif">今日核心意圖 (我已擁有...)</h2>
+                    <span class="ml-auto text-xs text-slate-400 font-mono">PAGE 1</span>
                 </div>
-                <div class="glass-input p-6">
-                    <textarea id="manifest" 
-                        class="w-full h-[400px] bg-transparent border-none focus:ring-0 text-slate-700 leading-relaxed resize-none text-lg"
-                        placeholder="詳細描述你理想的生活狀態，像是它已經發生了一樣..."></textarea>
+                <div class="h-[calc(100%-60px)]">
+                    <textarea id="manifest" class="ruled-textarea" 
+                        placeholder="詳細描述你理想的生活狀態，像是它已經發生了一樣。感受那種震動..."></textarea>
                 </div>
-            </section>
-
-            <!-- 感謝與豐盛區 -->
-            <section class="space-y-4">
-                <div class="flex justify-between items-center px-1">
-                    <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                        <i data-lucide="heart" class="text-rose-500" size="18"></i> 豐盛感謝
-                    </h3>
-                    <span class="text-[10px] bg-slate-100 text-slate-400 px-2 py-0.5 rounded uppercase font-bold">Gratitude</span>
-                </div>
-                <div class="glass-input p-6">
-                    <textarea id="gratitude" 
-                        class="w-full h-[400px] bg-transparent border-none focus:ring-0 text-slate-700 leading-relaxed resize-none text-lg"
-                        placeholder="寫下今天讓你感到滿足的 3-5 件事..."></textarea>
-                </div>
-            </section>
-
-        </div>
-
-        <!-- 底部狀態欄 -->
-        <div class="mt-10 pt-6 border-t border-slate-100 flex justify-between items-center text-xs text-slate-400 font-medium">
-            <div class="flex items-center gap-4">
-                <span class="flex items-center gap-1"><i data-lucide="check-circle" size="12" class="text-green-500"></i> 本地存儲已啟用</span>
-                <span class="flex items-center gap-1"><i data-lucide="shield-check" size="12"></i> 隱私保護 (端對端)</span>
             </div>
-            <p>© 2026 Align Personal Manifestation Suite</p>
+
+            <div class="journal-spine"></div>
+
+            <div class="journal-page">
+                <div class="flex items-center gap-3 mb-6 pb-2 border-b-2 border-slate-200">
+                    <i data-lucide="heart" class="text-rose-600 w-5 h-5"></i>
+                    <h2 class="text-xl font-bold text-slate-800 font-serif">豐盛感謝清單 (高頻對頻)</h2>
+                    <span class="ml-auto text-xs text-slate-400 font-mono">PAGE 2</span>
+                </div>
+                <div class="h-[calc(100%-60px)]">
+                    <textarea id="gratitude" class="ruled-textarea" 
+                        placeholder="寫下今天讓你感到滿足、快樂、感恩的幾件事。保持輕盈的心情..."></textarea>
+                </div>
+            </div>
+
         </div>
-    </main>
+
+        <footer class="mt-4 text-center text-[11px] text-slate-500 font-mono uppercase tracking-widest">
+            Align Journal Suite - Skeuomorphic Edition v1.0
+        </footer>
+    </div>
 
     <script>
         lucide.createIcons();
 
-        // 日期顯示
+        // 顯示日期 (模擬手寫日期)
         const now = new Date();
-        document.getElementById('full-date').innerText = now.toLocaleDateString('zh-TW', { 
-            year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' 
+        document.getElementById('date-display').innerText = now.toLocaleDateString('en-US', { 
+            year: 'numeric', month: '2-digit', day: '2-digit'
         });
 
         const mInput = document.getElementById('manifest');
@@ -166,36 +196,35 @@
 
         // 讀取
         window.onload = () => {
-            const saved = JSON.parse(localStorage.getItem('align_web_data') || '{}');
+            const saved = JSON.parse(localStorage.getItem('align_journal_data') || '{}');
             mInput.value = saved.m || "";
             gInput.value = saved.g || "";
         };
 
         // 儲存
         function saveData() {
-            const data = { m: mInput.value, g: gInput.value, lastSave: new Date().toISOString() };
-            localStorage.setItem('align_web_data', JSON.stringify(data));
+            const data = { m: mInput.value, g: gInput.value, time: new Date().getTime() };
+            localStorage.setItem('align_journal_data', JSON.stringify(data));
             
-            // 簡單的成功通知
+            // 模擬「閤上手帳」的視覺反饋
             const btn = event.currentTarget;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = `<i data-lucide="check" size="16"></i> 已同步至宇宙`;
-            btn.classList.replace('bg-indigo-600', 'bg-green-600');
+            btn.innerHTML = `<i data-lucide="lock" size="16"></i> 已封存頻率`;
+            btn.classList.replace('bg-rose-700', 'bg-green-700');
             lucide.createIcons();
 
             setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.classList.replace('bg-green-600', 'bg-indigo-600');
+                btn.innerHTML = `<i data-lucide="pen-tool" size="16"></i> 閤上手帳並儲存`;
+                btn.classList.replace('bg-green-700', 'bg-rose-700');
                 lucide.createIcons();
-            }, 2000);
+            }, 2500);
         }
 
         // 清除
         function clearData() {
-            if(confirm("確定要重置所有內容嗎？")) {
+            if(confirm("確定要撕掉今天的頁面重寫嗎？")) {
                 mInput.value = "";
                 gInput.value = "";
-                localStorage.removeItem('align_web_data');
+                localStorage.removeItem('align_journal_data');
             }
         }
     </script>
