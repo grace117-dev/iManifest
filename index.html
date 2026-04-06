@@ -2,231 +2,222 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Align Journal | 心靈顯化手帳</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Align Journal v2.0 | 靈魂手寫板</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
-        /* 引入手寫風格字體與襯線字體 */
-        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Noto+Serif+TC:wght@400;600&family=Zhi+Mang+Xing&display=swap');
         
         :root {
-            --paper-color: #fdfaf5; /* 奶油色紙張 */
-            --line-color: #e0d7c6; /* 橫格線顏色 */
+            --paper: #fdfaf3;
+            --ink: #334155;
+            --line: rgba(212, 204, 185, 0.5);
+            --seal: #991b1b;
         }
 
         body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background-color: #e5e1d7; /* 桌子背景色 */
-            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36z8gAFkNfX58RygALMDIwMAAVAgA4SQUC5A76HAAAAABJRU5ErkJggg=='); /* 輕微木紋質感 */
+            background: #d1d5db;
+            /* 模擬桌面紋理 */
+            background-image: radial-gradient(#9ca3af 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+            font-family: 'Noto Serif TC', serif;
+            overflow-x: hidden;
         }
 
-        /* 日誌本外殼 */
-        .journal-cover {
-            background-color: #4b5563; /* 深灰色外殼 */
-            border-radius: 12px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 15px rgba(0,0,0,0.1) inset;
-            padding: 20px;
+        /* 手帳外殼優化：加入皮革質感 */
+        .journal-container {
+            background: #2d3436;
+            border-radius: 16px 24px 24px 16px;
+            box-shadow: 
+                20px 20px 60px rgba(0,0,0,0.3),
+                inset -5px 0 10px rgba(255,255,255,0.05);
             position: relative;
+            border-left: 12px solid #1e272e;
         }
 
-        /* 書籤絲帶 */
-        .journal-cover::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            right: 50px;
-            width: 20px;
-            height: 100px;
-            background-color: #be123c; /* 玫瑰紅絲帶 */
-            border-radius: 0 0 5px 5px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-            z-index: 10;
-        }
-
-        /* 日誌本內頁容器 */
-        .journal-pages {
-            background-color: var(--paper-color);
-            border-radius: 4px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            display: flex;
-            min-height: 80vh;
-            position: relative;
-        }
-
-        /* 中間裝訂線/活頁孔模擬 */
-        .journal-spine {
-            width: 40px;
-            background: linear-gradient(to right, rgba(0,0,0,0.05), rgba(0,0,0,0) 10%, rgba(0,0,0,0) 90%, rgba(0,0,0,0.05));
-            position: relative;
-            border-left: 1px solid rgba(0,0,0,0.02);
-            border-right: 1px solid rgba(0,0,0,0.02);
-        }
-
-        .journal-spine::after {
-            content: '○○○○○○○○○○○○○○○';
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(0,0,0,0.1);
-            font-size: 18px;
-            line-height: 2.5;
-            letter-spacing: 2px;
-            text-align: center;
-            height: calc(100% - 40px);
-            overflow: hidden;
-        }
-
-        /* 單個頁面 */
-        .journal-page {
-            flex: 1;
+        /* 紙張紋理優化 */
+        .page {
+            background-color: var(--paper);
+            background-image: 
+                linear-gradient(var(--line) 1px, transparent 1px),
+                url('https://www.transparenttextures.com/patterns/cream-paper.png');
+            background-size: 100% 32px, auto;
+            background-attachment: local;
+            line-height: 32px;
             padding: 40px;
-            position: relative;
+            box-shadow: inset 10px 0 20px rgba(0,0,0,0.02);
         }
 
-        /* 模擬橫格線與手寫字體 */
-        .ruled-textarea {
+        .spine {
+            width: 50px;
+            background: linear-gradient(to right, #2d3436, #3d4446 20%, #2d3436 50%, #3d4446 80%, #2d3436);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        /* 手寫輸入框 */
+        .ink-text {
             width: 100%;
             height: 100%;
             background: transparent;
             border: none;
-            resize: none;
-            /* 英文字體使用 Caveat (手寫風), 中文使用 Noto Serif TC */
+            outline: none;
             font-family: 'Caveat', 'Noto Serif TC', serif;
             font-size: 20px;
-            line-height: 32px; /* 必須與 background-size 匹配 */
-            color: #4a4130;
-            outline: none !important;
-            padding: 0;
-            
-            /* 橫格線生成技巧 */
-            background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
-            background-size: 100% 32px; /* 32px 是一行的高度 */
-            background-attachment: local;
-            background-position: 0 31px;
+            color: var(--ink);
+            resize: none;
+            padding-top: 4px; /* 對齊橫線 */
         }
 
-        textarea::placeholder {
-            color: #c9c1af;
-            font-style: italic;
-            font-family: 'Noto Sans TC', sans-serif;
-            font-size: 16px;
+        /* 封蠟章按鈕樣式 */
+        .seal-button {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .seal-button:active {
+            transform: scale(0.9) rotate(-5deg);
         }
 
-        /* 響應式：手機上只顯示一面，並取消外殼 */
-        @media (max-width: 1024px) {
-            .journal-cover { padding: 0; background: transparent; box-shadow: none; }
-            .journal-pages { flex-direction: column; min-height: 100vh; }
-            .journal-spine { width: 100%; height: 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.05), transparent); }
-            .journal-spine::after { content: ''; }
-            .journal-page { padding: 25px; }
-            .journal-cover::before { display: none; } /* 隱藏絲帶 */
+        /* 成功儲存的印記動畫 */
+        @keyframes stamp {
+            0% { transform: scale(5); opacity: 0; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+        .stamped {
+            animation: stamp 0.3s ease-out forwards;
+        }
+
+        @media (max-width: 768px) {
+            .journal-container { border-left: none; border-radius: 0; }
+            .spine { display: none; }
+            .page-wrapper { flex-direction: column; }
         }
     </style>
 </head>
-<body class="p-4 md:p-10 flex justify-center items-center min-h-screen">
+<body class="min-h-screen flex items-center justify-center p-4 md:p-8">
 
-    <div class="w-full max-w-7xl journal-cover">
-        
-        <header class="flex justify-between items-center mb-6 px-4">
-            <div class="flex items-center gap-3">
-                <i data-lucide="compass" class="text-white w-7 h-7"></i>
-                <h1 class="text-2xl font-bold text-white tracking-tight font-serif">心靈手帳</h1>
-                <span id="date-display" class="text-slate-300 ml-4 font-mono text-sm"></span>
+    <div class="w-full max-w-6xl">
+        <!-- 工具列 -->
+        <div class="flex justify-between items-center mb-6 px-2">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-red-900 rounded-full flex items-center justify-center shadow-lg border-2 border-red-800 seal-button cursor-pointer" onclick="save()">
+                    <i data-lucide="award" class="text-amber-200"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800 tracking-widest font-serif uppercase">Align Journal</h1>
+                    <p id="date" class="text-xs text-slate-500 font-mono"></p>
+                </div>
             </div>
-            <div class="flex gap-3">
-                <button onclick="clearData()" class="px-4 py-2 text-slate-300 hover:text-white rounded-lg text-sm flex items-center gap-1.5 transition-colors">
-                    <i data-lucide="trash-2" size="14"></i> 重置頁面
+            <div class="flex gap-4">
+                <button onclick="clearAll()" class="text-slate-400 hover:text-red-600 transition-colors">
+                    <i data-lucide="eraser" size="20"></i>
                 </button>
-                <button onclick="saveData()" class="px-6 py-2.5 bg-rose-700 hover:bg-rose-800 text-white rounded-lg shadow-md transition-all font-bold text-sm flex items-center gap-2 active:scale-95">
-                    <i data-lucide="pen-tool" size="16"></i> 閤上手帳並儲存
-                </button>
             </div>
-        </header>
-
-        <div class="journal-pages">
-            
-            <div class="journal-page border-r border-slate-100/50">
-                <div class="flex items-center gap-3 mb-6 pb-2 border-b-2 border-slate-200">
-                    <i data-lucide="zap" class="text-amber-600 w-5 h-5"></i>
-                    <h2 class="text-xl font-bold text-slate-800 font-serif">今日核心意圖 (我已擁有...)</h2>
-                    <span class="ml-auto text-xs text-slate-400 font-mono">PAGE 1</span>
-                </div>
-                <div class="h-[calc(100%-60px)]">
-                    <textarea id="manifest" class="ruled-textarea" 
-                        placeholder="詳細描述你理想的生活狀態，像是它已經發生了一樣。感受那種震動..."></textarea>
-                </div>
-            </div>
-
-            <div class="journal-spine"></div>
-
-            <div class="journal-page">
-                <div class="flex items-center gap-3 mb-6 pb-2 border-b-2 border-slate-200">
-                    <i data-lucide="heart" class="text-rose-600 w-5 h-5"></i>
-                    <h2 class="text-xl font-bold text-slate-800 font-serif">豐盛感謝清單 (高頻對頻)</h2>
-                    <span class="ml-auto text-xs text-slate-400 font-mono">PAGE 2</span>
-                </div>
-                <div class="h-[calc(100%-60px)]">
-                    <textarea id="gratitude" class="ruled-textarea" 
-                        placeholder="寫下今天讓你感到滿足、快樂、感恩的幾件事。保持輕盈的心情..."></textarea>
-                </div>
-            </div>
-
         </div>
 
-        <footer class="mt-4 text-center text-[11px] text-slate-500 font-mono uppercase tracking-widest">
-            Align Journal Suite - Skeuomorphic Edition v1.0
-        </footer>
+        <!-- 手帳本體 -->
+        <div class="journal-container overflow-hidden">
+            <div class="page-wrapper flex min-h-[75vh]">
+                
+                <!-- 左頁：意圖 -->
+                <div class="page flex-1 relative">
+                    <div class="flex items-center justify-between mb-8">
+                        <span class="text-sm font-bold text-slate-400 italic">Intentions // 意圖</span>
+                        <i data-lucide="feather" class="text-slate-300 w-4 h-4"></i>
+                    </div>
+                    <textarea id="m-input" class="ink-text" placeholder="親愛的宇宙，我已經準備好接收..."></textarea>
+                </div>
+
+                <!-- 書脊 -->
+                <div class="spine"></div>
+
+                <!-- 右頁：感謝 -->
+                <div class="page flex-1 relative">
+                    <div class="flex items-center justify-between mb-8">
+                        <span class="text-sm font-bold text-slate-400 italic">Gratitude // 豐盛</span>
+                        <span class="text-[10px] text-slate-300 font-mono">2026 EDITION</span>
+                    </div>
+                    <textarea id="g-input" class="ink-text" placeholder="謝謝你，讓這一切自然而然地發生..."></textarea>
+                    
+                    <!-- 儲存成功時顯示的印章印記 (隱藏) -->
+                    <div id="save-seal" class="absolute bottom-10 right-10 opacity-0 pointer-events-none">
+                        <div class="w-20 h-20 border-4 border-red-800/30 rounded-full flex items-center justify-center text-red-800/30 font-bold rotate-[-20deg] text-xs">
+                            ALIGN VERIFIED
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 頁碼 -->
+        <div class="mt-6 flex justify-center gap-10 text-[10px] text-slate-500 font-mono tracking-[0.2em]">
+            <span>L-PAGE.07</span>
+            <div class="flex items-center gap-2">
+                <div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
+            </div>
+            <span>R-PAGE.08</span>
+        </div>
     </div>
 
     <script>
         lucide.createIcons();
 
-        // 顯示日期 (模擬手寫日期)
-        const now = new Date();
-        document.getElementById('date-display').innerText = now.toLocaleDateString('en-US', { 
-            year: 'numeric', month: '2-digit', day: '2-digit'
+        const mInput = document.getElementById('m-input');
+        const gInput = document.getElementById('g-input');
+        const seal = document.getElementById('save-seal');
+
+        // 更新日期
+        document.getElementById('date').innerText = new Date().toLocaleDateString('zh-TW', {
+            year: 'numeric', month: 'long', day: 'numeric', weekday: 'narrow'
         });
 
-        const mInput = document.getElementById('manifest');
-        const gInput = document.getElementById('gratitude');
-
-        // 讀取
+        // 載入資料
         window.onload = () => {
-            const saved = JSON.parse(localStorage.getItem('align_journal_data') || '{}');
-            mInput.value = saved.m || "";
-            gInput.value = saved.g || "";
+            const data = JSON.parse(localStorage.getItem('manifest_v2') || '{}');
+            mInput.value = data.m || "";
+            gInput.value = data.g || "";
         };
 
-        // 儲存
-        function saveData() {
-            const data = { m: mInput.value, g: gInput.value, time: new Date().getTime() };
-            localStorage.setItem('align_journal_data', JSON.stringify(data));
+        // 儲存函數
+        function save() {
+            const data = { m: mInput.value, g: gInput.value };
+            localStorage.setItem('manifest_v2', JSON.stringify(data));
             
-            // 模擬「閤上手帳」的視覺反饋
-            const btn = event.currentTarget;
-            btn.innerHTML = `<i data-lucide="lock" size="16"></i> 已封存頻率`;
-            btn.classList.replace('bg-rose-700', 'bg-green-700');
-            lucide.createIcons();
+            // 觸發印章動畫
+            seal.classList.remove('opacity-0', 'stamped');
+            void seal.offsetWidth; // 重新觸發 CSS 動畫
+            seal.classList.add('stamped');
 
+            if(navigator.vibrate) navigator.vibrate([30, 50, 30]);
+            
             setTimeout(() => {
-                btn.innerHTML = `<i data-lucide="pen-tool" size="16"></i> 閤上手帳並儲存`;
-                btn.classList.replace('bg-green-700', 'bg-rose-700');
-                lucide.createIcons();
-            }, 2500);
+                seal.classList.add('opacity-0');
+            }, 3000);
         }
 
-        // 清除
-        function clearData() {
-            if(confirm("確定要撕掉今天的頁面重寫嗎？")) {
+        // 清除函數
+        function clearAll() {
+            if(confirm("確定要撕毀這兩頁重新開始嗎？")) {
                 mInput.value = "";
                 gInput.value = "";
-                localStorage.removeItem('align_journal_data');
+                localStorage.removeItem('manifest_v2');
             }
         }
+
+        // 智慧自動儲存 (防丟失)
+        let timer;
+        [mInput, gInput].forEach(el => {
+            el.addEventListener('input', () => {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    localStorage.setItem('manifest_v2', JSON.stringify({ m: mInput.value, g: gInput.value }));
+                }, 2000);
+            });
+        });
     </script>
 </body>
 </html>
